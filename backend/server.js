@@ -1,11 +1,11 @@
 let sdata = [
     {
-        name: "try",
-        fathername: "done",
         email: "try@gmail.com",
         password: "123"
     },
 ];
+
+var dataAdd = [];
 
 var PORT = process.env.PORT || 5000;
 var express = require("express");
@@ -19,31 +19,6 @@ var app = express();
 app.use(cors());
 app.use(morgan('dev'));
 app.use(bodyParser.json());
-
-//Ye code signup ka hay signup say data yahan server main a raha hay...!
-app.post('/signup', (req, res) => {
-
-    isFound = false;
-    for (i = 0; i < sdata.length; i++) {
-        if (sdata[i].email === req.body.email) {
-            isFound = true;
-            break;
-        }
-    }
-    if (isFound) {
-        res.send({
-            status: 400, //Is ka matlab hay email already exist
-            message: "User already exist!"
-        });
-    }
-    else {
-        sdata.push(req.body);
-        res.send({
-            status: 200, //Is ka matlab hay email oke hay
-            message: "Signup Successful"
-        });
-    }
-})
 
 //Ye code login ka hay...!
 app.post('/login', (req, res) => {
@@ -73,7 +48,31 @@ app.post('/login', (req, res) => {
     }
 })
 
+app.post("/del", (req, res) => {
+    var index = req.body.i
+    dataAdd.splice(index, 1);
+    console.log(dataAdd);
+    res.send(dataAdd);
+})
 
+app.post("/dashboard", (req, res) => {
+    let newDate = new Date();
+    newDate.toLocaleDateString();
+    dataAdd.push({
+        title: req.body.title,
+        date: newDate,
+        description: req.body.description
+    });
+    res.send({
+        post: dataAdd,
+        message: "Post Successfuly"
+    });
+})
+
+app.get("/getPosts", (req, res) => {
+    console.log(dataAdd);
+    res.send(dataAdd);
+})
 app.listen(PORT, () => {
     console.log("Server is runing on " + PORT);
 })
